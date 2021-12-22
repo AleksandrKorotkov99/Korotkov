@@ -1,0 +1,175 @@
+interface Subject {
+
+    setStrategy(strategy: Strategy): void
+
+    attach(observer: Observer): void;
+
+    detach(observer: Observer): void;
+
+    notify(): void;
+
+}
+
+interface Strategy {
+
+    doAlgorithm(): string;
+
+}
+
+class ConcreteSubject implements Subject {
+
+    public state: string;
+
+    private strategy: Strategy;
+
+    constructor(strategy: Strategy) {
+
+        this.strategy = strategy;
+
+    }
+
+    public setStrategy(strategy: Strategy) {
+
+        this.strategy = strategy;
+
+    }
+
+    private observers: Observer[] = [];
+
+    public attach(observer: Observer): void {
+
+        const isExist = this.observers.includes(observer);
+
+        if (isExist) {
+
+            return console.log('Subject: Berlinomat уже существует.');
+
+        }
+
+        console.log('Subject: Новый Berlinomat добавлен');
+
+        this.observers.push(observer);
+
+    }
+
+    public detach(observer: Observer): void {
+
+        const observerIndex = this.observers.indexOf(observer);
+
+        if (observerIndex === -1) {
+
+            return console.log('Subject: Такого Berlinomat не сущетвует.');
+
+        }
+
+        this.observers.splice(observerIndex, 1);
+
+        console.log('Subject: Berlinomat удалён.');
+
+    }
+
+    public notify(): void {
+
+        for (const observer of this.observers) {
+
+            observer.update(this);
+
+        }
+
+    }
+
+    public someBusinessLogic(): void {
+
+        this.state = this.strategy.doAlgorithm();
+
+        console.log(`Subject: Моё состояние изменилось на: ${this.state}`);
+
+        this.notify();
+
+    }
+
+}
+
+interface Observer {
+
+    update(subject: Subject): void;
+
+}
+
+class ConcreteObserverA implements Observer {
+
+    public update(subject: Subject): void {
+
+        if (subject instanceof ConcreteSubject && subject.state == "Буду выдавать Сникерс") {
+
+            console.log('ConcreteObserverA: Теперь я могу получить Сникерс.');
+
+        }
+
+    }
+
+}
+
+class ConcreteObserverB implements Observer {
+
+    public update(subject: Subject): void {
+
+        if (subject instanceof ConcreteSubject && subject.state == "Буду выдавать Круассан") {
+
+            console.log('ConcreteObserverB: Теперь я могу получить Круассан.');
+
+        }
+
+    }
+
+}
+
+class StrategySnickers implements Strategy {
+
+    public doAlgorithm() {
+
+        return "Буду выдавать Сникерс";
+
+    }
+
+}
+
+class StrategyCroissant implements Strategy {
+
+    public doAlgorithm() {
+
+        return "Буду выдавать Круассан";
+
+    }
+
+}
+
+const subject = new ConcreteSubject(new StrategySnickers());
+
+const observer1 = new ConcreteObserverA();
+
+subject.attach(observer1);
+
+const observer2 = new ConcreteObserverB();
+
+subject.attach(observer2);
+
+subject.someBusinessLogic();
+
+subject.setStrategy(new StrategyCroissant())
+
+subject.someBusinessLogic();
+
+subject.detach(observer2);
+
+subject.detach(observer1);
+
+subject.setStrategy(new StrategySnickers())
+
+subject.someBusinessLogic();
+
+
+
+
+
+https://www.typescriptlang.org/play
