@@ -1,4 +1,4 @@
-# Korotkov
+# Korotkov LAB
 class SongSerializer:
 def serialize(self, song, format):
 serializer = get_serializer(format)
